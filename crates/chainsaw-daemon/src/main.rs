@@ -49,8 +49,8 @@ impl Daemon {
             r#"# Chainsaw Daemon Configuration
 # This file was automatically generated
 
-# GPU Mode: \"integrated\", \"hybrid\"
-mode = \"{}\"
+# GPU Mode: "integrated", "hybrid"
+mode = "{}"
 "#,
             mode
         )

@@ -1,6 +1,6 @@
-use aya::{Ebpf, Btf};
-use aya::programs::Lsm;
 use aya::maps::{HashMap, MapError};
+use aya::programs::Lsm;
+use aya::{Btf, Ebpf};
 use std::io::{Error as IoError, ErrorKind};
 
 pub struct EbpfBlocker {

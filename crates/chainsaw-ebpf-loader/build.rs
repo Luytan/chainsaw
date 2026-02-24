@@ -13,13 +13,16 @@ fn main() {
         .args([
             "-O2",
             "-g",
-            "-target", "bpf",
+            "-target",
+            "bpf",
             "-fno-stack-protector",
             "-fno-ident",
             "-fno-unwind-tables",
             "-fno-asynchronous-unwind-tables",
-            "-c", source_path,
-            "-o", out_path.to_str().unwrap(),
+            "-c",
+            source_path,
+            "-o",
+            out_path.to_str().unwrap(),
         ])
         .env("NIX_HARDENING_ENABLE", "")
         .status()

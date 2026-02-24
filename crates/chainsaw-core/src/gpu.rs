@@ -86,7 +86,10 @@ pub fn list_gpu(pci_devices: &HashMap<String, Device>) -> io::Result<HashMap<Str
 }
 
 /// Refresh GPU information for a specific PCI address
-fn refresh_gpu(pci_address: &str, pci_devices: &HashMap<String, Device>) -> io::Result<Option<Gpu>> {
+fn refresh_gpu(
+    pci_address: &str,
+    pci_devices: &HashMap<String, Device>,
+) -> io::Result<Option<Gpu>> {
     let device = match pci_devices.values().find(|d| d.pci_address == pci_address) {
         Some(d) => d,
         None => return Ok(None),
@@ -130,7 +133,7 @@ pub fn unbind_gpu(pci_address: &str, slot: usize) -> io::Result<()> {
         .join("unbind");
 
     fs::write(unbind_path, pci_address)?;
-        
+
     let remove_path = Path::new("/sys/bus/pci/devices")
         .join(pci_address)
         .join("remove");
@@ -138,7 +141,7 @@ pub fn unbind_gpu(pci_address: &str, slot: usize) -> io::Result<()> {
     fs::write(remove_path, "1")?;
     // Power off the GPU after unbinding
     set_gpu_power(slot, false)?;
-    
+
     Ok(())
 }
 /// Re-bind the GPU to its driver.
@@ -163,7 +166,6 @@ fn is_sleeping(pci_address: &str) -> io::Result<bool> {
     Ok(fs::read_to_string(power_state_path)?.trim() == "D3cold")
 }
 
-
 fn render_node_path(pci_address: &str) -> String {
     let dri_path = format!("/dev/dri/by-path/pci-{}-render", pci_address);
 
@@ -183,10 +185,10 @@ fn card_node_path(pci_address: &str) -> String {
 /// Find the PCI slot number for a given PCI address
 fn find_pci_slot(pci_address: &str) -> io::Result<usize> {
     let slots_dir = Path::new("/sys/bus/pci/slots");
-    
+
     // Remove the function part (e.g., "0000:03:00.0" -> "0000:03:00")
     let pci_short = pci_address.trim_end_matches(|c: char| c == '.' || c.is_ascii_digit());
-    
+
     // Iterate through all slot directories
     for entry in fs::read_dir(slots_dir)? {
         let entry = entry?;
@@ -202,10 +204,12 @@ fn find_pci_slot(pci_address: &str) -> io::Result<usize> {
             }
         }
     }
-    
-    Err(io::Error::new(io::ErrorKind::NotFound, "PCI slot not found"))
-}
 
+    Err(io::Error::new(
+        io::ErrorKind::NotFound,
+        "PCI slot not found",
+    ))
+}
 
 pub fn is_dgpu_bound(pci_address: &str) -> io::Result<bool> {
     let driver_path = Path::new("/sys/bus/pci/devices")
@@ -223,6 +227,6 @@ pub fn set_gpu_power(slot: usize, power_on: bool) -> io::Result<()> {
 
     let value = if power_on { "1" } else { "0" };
     fs::write(power_path, value)?;
-    
+
     Ok(())
 }

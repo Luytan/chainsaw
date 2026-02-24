@@ -1,9 +1,9 @@
-use std::collections::HashMap;
-use std::{error::Error, future::pending};
-use config::Config;
 use chainsaw_core::iommu::Device;
 use chainsaw_core::{gpu, iommu};
+use config::Config;
 use log::{info, warn};
+use std::collections::HashMap;
+use std::{error::Error, future::pending};
 use tokio::sync::RwLock;
 use zbus::{connection, fdo, interface};
 
@@ -38,7 +38,7 @@ impl Daemon {
             ebpf_blocker: tokio::sync::Mutex::new(ebpf_blocker),
         })
     }
-    
+
     fn get_current_hardware_mode(&self) -> Result<String, Box<dyn std::error::Error>> {
         // eBPF starts with an empty block list, so default mode is hybrid.
         Ok(MODE_HYBRID.to_string())
@@ -58,7 +58,10 @@ mode = "{}"
 
     fn ensure_config_exists() -> Result<(), Box<dyn std::error::Error>> {
         if !std::path::Path::new(CONFIG_PATH).exists() {
-            info!("Config file not found, creating default config at {}", CONFIG_PATH);
+            info!(
+                "Config file not found, creating default config at {}",
+                CONFIG_PATH
+            );
             std::fs::write(CONFIG_PATH, Self::config_contents(MODE_HYBRID))?;
         }
         Ok(())
@@ -176,7 +179,7 @@ mode = "{}"
             );
         }
     }
-    
+
     fn save_mode_to_config(mode: &str) -> Result<(), Box<dyn std::error::Error>> {
         std::fs::write(CONFIG_PATH, Self::config_contents(mode))?;
         Ok(())

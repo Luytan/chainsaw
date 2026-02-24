@@ -129,11 +129,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "on" => true,
                     "off" => false,
                     _ => {
-                        return Err(format!(
-                            "Invalid state '{}'. Expected: on or off",
-                            state
-                        )
-                        .into())
+                        return Err(format!("Invalid state '{}'. Expected: on or off", state).into());
                     }
                 };
                 let response: String = proxy.call("SetGpuBlock", &(id, block)).await?;
